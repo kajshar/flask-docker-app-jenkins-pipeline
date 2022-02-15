@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_HUB_REPO = "kajolsharma/pythonflaskapp"
+        DOCKER_CREDENTIAL='dockerhub_id'
         CONTAINER_NAME = "flask-container"
         STUB_VALUE = "200"
     }
@@ -22,7 +23,7 @@ pipeline {
 
                 //  Pushing Image to Repository
                 sh 'docker push kajolsharma/pythonflaskapp:$BUILD_NUMBER'
-                sh 'docker push kajolsharma/pythonflaskapp:latest'
+                sh 'docker push $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:$BUILD_NUMBER'
                 
                 echo "Image built and pushed to repository"
             }
