@@ -24,7 +24,7 @@ pipeline {
            }
         stage('Deploy') {
             steps {
-                sh 'docker run --name flask-app -d -p 5000:5000 $DOCKER_HUB_REPO'
+                sh 'docker run --name flask-app:$BUILD_NUMBER -d -p 5000:5000 $DOCKER_HUB_REPO'
             }
         }
     }
