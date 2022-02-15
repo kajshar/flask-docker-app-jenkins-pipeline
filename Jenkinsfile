@@ -3,18 +3,11 @@ pipeline {
     environment {
         DOCKER_HUB_REPO = "kajolsharma/pythonflaskapp"
         CONTAINER_NAME = "flask-container"
-        STUB_VALUE = "200"
+        
     }
     stages {
-        stage('Stubs-Replacement'){
-            steps {
-                // 'STUB_VALUE' Environment Variable declared in Jenkins Configuration 
-                echo "STUB_VALUE = ${STUB_VALUE}"
-                sh "sed -i 's/<STUB_VALUE>/$STUB_VALUE/g' config.py"
-                sh 'cat config.py'
-            }
-        }
-        stage('Build') {
+        
+        stage('Build Image') {
             steps {
                 withDockerRegistry([ credentialsId: "dockerhub_id", url: "https://index.docker.io/v1/" ]) {             
                 //  Building new image
