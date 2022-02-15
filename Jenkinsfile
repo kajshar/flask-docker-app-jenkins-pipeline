@@ -23,7 +23,7 @@ pipeline {
 
                 //  Pushing Image to Repository
                 sh 'docker push kajolsharma/pythonflaskapp:$BUILD_NUMBER'
-                sh 'docker push $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:$BUILD_NUMBER'
+                sh 'docker push kajolsharma/pythonflaskapp:latest'
                 
                 echo "Image built and pushed to repository"
                 }
