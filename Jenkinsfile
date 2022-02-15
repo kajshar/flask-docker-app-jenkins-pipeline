@@ -2,7 +2,6 @@ pipeline {
     agent any
     environment {
         DOCKER_HUB_REPO = "kajolsharma/pythonflaskapp"
-        registryCredential='dockerhub_id'
         CONTAINER_NAME = "flask-container"
         STUB_VALUE = "200"
     }
@@ -17,7 +16,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                               
+                withDockerRegistry([ credentialsId: "dockerhub_id", url: "https://index.docker.io/v1/" ]) {             
                 //  Building new image
                 sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
                 sh 'docker image tag $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:$BUILD_NUMBER'
@@ -27,8 +26,9 @@ pipeline {
                 sh 'docker push $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:$BUILD_NUMBER'
                 
                 echo "Image built and pushed to repository"
+                }
             }
-        }
+           }
         stage('Deploy') {
             steps {
                 script{
