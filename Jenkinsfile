@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_HUB_REPO = "kajolsharma/pythonflaskapp"
-        DOCKER_CREDENTIAL='dockerhub_id'
+        DOCKER_CREDENTIAL=credentials('dockerhub_id')
         CONTAINER_NAME = "flask-container"
         STUB_VALUE = "200"
     }
@@ -17,6 +17,9 @@ pipeline {
         }
         stage('Build') {
             steps {
+                //Logging into Docker
+                sh 'echo $DOCKERHUB_CREDENTIAL_PSW|docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                
                 //  Building new image
                 sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
                 sh 'docker image tag $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:$BUILD_NUMBER'
