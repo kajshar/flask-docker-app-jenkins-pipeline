@@ -30,8 +30,8 @@ pipeline {
                         sh 'docker run -d -p 5000:5000 $DOCKER_HUB_REPO'
                     }
                     else {
-                        sh 'docker stop $CONTAINER_ID'
-                        sh 'docker rm $CONTAINER_ID'
+                        sh 'docker stop'
+                        sh 'docker rm'
                         sh 'docker run -d -p 5000:5000 $DOCKER_HUB_REPO'
                     }
                     //sh 'echo "Latest image/code deployed"'
