@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        DOCKER_HUB_REPO = "kajolsharma/pythonflaskapp"
+        imagename = "kajolsharma/pythonflaskapp"
         registryCredential='dockerhub_id'
-        CONTAINER_NAME = "flask-container"
+        dockerImage  = "flask-container"
         STUB_VALUE = "200"
     }
     stages {
@@ -18,7 +18,7 @@ pipeline {
         stage('Build') {
             steps {
                                
-                //  Building new image
+                /*  Building new image
                 sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
                 sh 'docker image tag $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:$BUILD_NUMBER'
 
@@ -27,19 +27,36 @@ pipeline {
                 sh 'docker push $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:$BUILD_NUMBER'
                 
                 echo "Image built and pushed to repository"
-            }
-        }
+                */
+                
+                 stage('Build image') {
+            steps {
+             script {
+		dockerImage = docker.build imagename
+		}
+}
+}
+stage('Deploy Image') {
+steps{
+script {
+docker.withRegistry( '', registryCredential ) {
+dockerImage.push("$BUILD_NUMBER")
+dockerImage.push('latest')
+}
+}
+}
+}
         stage('Deploy') {
             steps {
                 script{
                     //sh 'BUILD_NUMBER = ${BUILD_NUMBER}'
                     if (BUILD_NUMBER == "1") {
-                        sh 'docker run --name $CONTAINER_NAME -d -p 5000:5000 $DOCKER_HUB_REPO'
+                        sh 'docker run --name $dockerImage -d -p 5000:5000 $imagename'
                     }
                     else {
-                        sh 'docker stop $CONTAINER_NAME'
-                        sh 'docker rm $CONTAINER_NAME'
-                        sh 'docker run --name $CONTAINER_NAME -d -p 5000:5000 $DOCKER_HUB_REPO'
+                        sh 'docker stop $dockerImage'
+                        sh 'docker rm $dockerImage'
+                        sh 'docker run --name $dockerImage -d -p 5000:5000 $imagename'
                     }
                     //sh 'echo "Latest image/code deployed"'
                 }
